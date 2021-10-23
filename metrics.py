@@ -56,8 +56,27 @@ def precision_from_array(guesses):
     return catPrecision
 
 
-def average_precision(precisionList):
-    precision = 0
-    for val in precisionList:
-        precision += val
-    return precision / len(precisionList)
+"""
+Given an array of lists with the format (guess, correct cat.), returns the F measure of each category
+That is, an array with the F measure for GEOGRAPHY, MUSIC, LITERATURE, HISTORY, SCIENCE
+"""
+def fmeasure_from_array(guesses, b = 1):
+
+    # Gets the precision and the recall
+    precision = precision_from_array(guesses)
+    #recall = recall_from_array(guesses)
+    recall = [1,1,1,1,1]
+
+    # Calculate F for each category
+    fmeasure = [1,1,1,1,1]
+    for i in range(0,5):
+        fmeasure[i] = ((b * b + 1) * precision[i] * recall[i] ) / (b * b * precision[i] + recall[i])
+
+    return fmeasure
+
+
+def average_from_array(array):
+    av = 0
+    for val in array:
+        av += val
+    return av / len(array)
