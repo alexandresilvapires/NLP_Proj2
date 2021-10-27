@@ -2,6 +2,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import RegexpTokenizer
 
 """
 Downloads every necessary lib from nltk
@@ -118,7 +119,8 @@ def remove_stopwords_from_array(sentences):
     stopw = set(stopwords.words("english"))
 
     for s in sentences:
-        word_tokens = word_tokenize(s)
+        tokenizer = RegexpTokenizer(r'\w+')
+        word_tokens = tokenizer.tokenize(s)
 
         filtered_sentence = [w for w in word_tokens if not w.lower() in stopw]
         newSentences.append(filtered_sentence)
