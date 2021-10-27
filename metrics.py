@@ -1,3 +1,32 @@
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+
+"""
+Downloads every necessary lib from nltk
+"""
+def download_resources():
+    nltk.download('stopwords')
+    nltk.download('punkt')
+    nltk.download('wordnet')
+
+"""
+Given a text file, extracts a column to an array
+"""
+def text_to_column_array(path, colNumber):
+    file = open(path,"rt")
+
+    lines = file.readlines()
+    col = []
+
+    for line in lines:
+        columns = line.split("\t")
+        col.append(columns[colNumber])
+
+    return col
+        
+
 """
 Given an array of lists with the format (guess, correct cat.), creates an agreement matrix 
 with entries GEOGRAPHY, MUSIC, LITERATURE, HISTORY, SCIENCE, where columns are the correct answers
@@ -80,3 +109,44 @@ def average_from_array(array):
     for val in array:
         av += val
     return av / len(array)
+
+"""
+Given an array of sentences, returns an array of arrays of words after filtering stop words
+"""
+def remove_stopwords_from_array(sentences):
+    newSentences = []
+    stopw = set(stopwords.words("english"))
+
+    for s in sentences:
+        word_tokens = word_tokenize(s)
+
+        filtered_sentence = [w for w in word_tokens if not w.lower() in stopw]
+        newSentences.append(filtered_sentence)
+
+    return newSentences
+
+"""
+Given an array of arrays (each word of each sentence), returns the array with each word lemmatized
+"""
+def lemmatize_sentence_array(sentences):
+    newSentences = []
+    lemmatizer = WordNetLemmatizer()
+
+    for s in sentences:
+        newS = []
+        
+        for w in s:
+            newS.append(lemmatizer.lemmatize(w))
+        newSentences.append(newS)
+    return newSentences
+
+"""
+Given two arrays, one with the correct categories, and one with the guesses, returns an accuracy value between 0 and 1
+"""
+def guess_accuracy(correct, guess):
+    rights = 0
+    for i in range(len(correct)):
+        if(correct[i] == guess[i]):
+            rights += 1
+
+    return rights/len(correct)
