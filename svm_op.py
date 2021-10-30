@@ -8,9 +8,10 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+from sklearn.linear_model import SGDClassifier
+
 import numpy as np
 import pandas as pd
-import string
 import utils
 
 
@@ -24,7 +25,7 @@ def convert_to_pandas(train_set_filename, test_set_filename):
 	test_df = utils.file_to_dataframe(test_set_filename)
 
 	# 'Content' = 'Question' + 'Answer'
-	train_df['Content'] = train_df['Question'] + ' ' + train_df['Answer']
+	train_df['Content'] = train_df['Question'] + ' ' + train_df['Answer'] + ' ' + train_df['Answer']
 	train_df['Content'] = train_df['Content'].fillna('') # replace NaN with ''
 	
 	test_df['Content'] = test_df['Question'] + ' ' + test_df['Answer']
@@ -52,13 +53,14 @@ Preprocess and vectorize arguments
 def vectorize(train_t, test_t):
 	stop_words = set(stopwords.words("english"))
 	
-	vectorizer = TfidfVectorizer(analyzer='word', lowercase=True, stop_words=stop_words)
+	
+	vectorizer = TfidfVectorizer(analyzer='word',smooth_idf=False, lowercase=True, stop_words=stop_words)
+
 	train_t = vectorizer.fit_transform(train_t)
 	test_t = vectorizer.transform(test_t)
 
+
 	return train_t, test_t
-
-
 
 def main():
 	# check arguments
@@ -75,7 +77,9 @@ def main():
 
 	# build and train SUPPORT VECTOR MACHINE
 	print("\nBuilding and training SVM...")
+	#svm = SGDClassifier(max_iter=20000, tol=1e-5,alpha=0.00006).fit(train_t, train_c)
 	svm = LinearSVC().fit(train_t, train_c)
+
 	print("Done!\n")
 
 	# test svm
