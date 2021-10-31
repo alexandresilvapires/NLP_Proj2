@@ -1,5 +1,3 @@
-from nltk.corpus.reader.chasen import test
-
 from sklearn.metrics import jaccard_score
 
 

@@ -10,10 +10,6 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import jaccard_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from sklearn.linear_model import SGDClassifier
-
-import numpy as np
-import pandas as pd
 import utils
 
 
