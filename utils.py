@@ -7,7 +7,7 @@ categories = ["SCIENCE", "HISTORY", "LITERATURE", "MUSIC", "GEOGRAPHY"]
 # TODO: Pensar em mais util functions, isto é super simples de implementar
 
 
-def file_to_dataframe(filename, names=["Category", "Question", "Answer"]):
+def file_to_dataframe(filename, names=["Category", "Question", "Answer", "Noise"]):
 	assert filename is not None, TypeError("No filename given.")
 
 	return pd.read_csv(filename, delimiter='\t', names=names)
