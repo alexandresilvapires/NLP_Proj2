@@ -1,3 +1,8 @@
+from nltk.corpus.reader.chasen import test
+
+from sklearn.metrics import jaccard_score
+
+
 import metrics
 
 def run_model_dev(path):
@@ -16,13 +21,27 @@ def run_model_test(trainPath, testPath):
     testCategories = metrics.text_to_column_array(testPath, 0)
     testQuestions = metrics.text_to_column_array(testPath, 1)
 
-    categories = naivebayes_model(trainQuestions,trainCategories, testQuestions)
+    categories = naivebayes_model(trainQuestions,trainCategories, testQuestions, preprocess=False)
 
     print(metrics.guess_accuracy(testCategories, categories))
 
-def naivebayes_model(questionsTrain, categoriesTrain, questionsTest):
-    qNotFiltered = metrics.remove_stopwords_from_array(questionsTrain)
-    q = metrics.lemmatize_sentence_array(qNotFiltered)
+    results_array = []
+    for i in range(len(testCategories)):
+        results_array.append([testCategories[i], categories[i]])
+
+    print("Cats: GEO, HIST, LITERATURE, MUSIC, SCIENCE")
+    print("Recall:", metrics.recall_from_array(results_array))
+    print("Precision:", metrics.precision_from_array(results_array))
+    print("FMeasure:", metrics.fmeasure_from_array(results_array))
+
+    print("Jaccard: ", jaccard_score(testCategories, categories,average=None))
+
+def naivebayes_model(questionsTrain, categoriesTrain, questionsTest, preprocess=True):
+    q = metrics.sentences_to_array(questionsTrain)
+    if(preprocess):
+        qNotFiltered = metrics.remove_stopwords_from_array(questionsTrain)
+        q = metrics.lemmatize_sentence_array(qNotFiltered)
+        
 
     qc = []
     # Associate each array in list with a category
@@ -79,8 +98,10 @@ def naivebayes_model(questionsTrain, categoriesTrain, questionsTest):
     # for every sentence in the test, we will turn it into an array, remove stop words, lemmatize
     # and check for the sum of the probabilities of the word
 
-    tNotFiltered = metrics.remove_stopwords_from_array(questionsTest)
-    t = metrics.lemmatize_sentence_array(tNotFiltered)
+    t = metrics.sentences_to_array(questionsTest)
+    if(preprocess):
+        tNotFiltered = metrics.remove_stopwords_from_array(questionsTest)
+        t = metrics.lemmatize_sentence_array(tNotFiltered)
 
     for s in t:
         chances = {}

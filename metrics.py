@@ -85,6 +85,30 @@ def precision_from_array(guesses):
 
     return catPrecision
 
+"""
+Given an array of lists with the format (guess, correct cat.), returns the recall of each category
+That is, an array with the precision for GEOGRAPHY, MUSIC, LITERATURE, HISTORY, SCIENCE
+"""
+def recall_from_array(guesses):
+
+    # Get the agreement matrix
+    matrix = agreement_matrix(guesses)
+
+    # Calculate precision for each category
+    catPrecision = [1.0,1.0,1.0,1.0,1.0]
+    for i in range(0,5):
+        truePos = matrix[i][i]
+        falseNeg = 0
+        
+        for j in range(0,5):
+            if(i != j):
+                # The false negatives are given by the sum of the line of the guess category except the right one
+                falseNeg += matrix[j][i]
+        
+        if(truePos + falseNeg != 0):
+            catPrecision[i] = truePos / (truePos + falseNeg)
+
+    return catPrecision
 
 """
 Given an array of lists with the format (guess, correct cat.), returns the F measure of each category
@@ -110,6 +134,21 @@ def average_from_array(array):
     for val in array:
         av += val
     return av / len(array)
+
+"""
+Given an array of sentences, returns an array of arrays of words after filtering stop words
+"""
+def sentences_to_array(sentences):
+    newSentences = []
+    stopw = set(stopwords.words("english"))
+
+    for s in sentences:
+        tokenizer = RegexpTokenizer(r'\w+')
+        word_tokens = tokenizer.tokenize(s)
+        newSentences.append(word_tokens)
+
+    return newSentences
+
 
 """
 Given an array of sentences, returns an array of arrays of words after filtering stop words

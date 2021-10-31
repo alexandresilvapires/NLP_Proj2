@@ -6,6 +6,8 @@ from nltk.corpus import stopwords
 from sklearn.svm import LinearSVC
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import jaccard_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from sklearn.linear_model import SGDClassifier
@@ -62,6 +64,19 @@ def vectorize(train_t, test_t):
 
 	return train_t, test_t
 
+"""
+Vectorize arguments
+"""
+def vectorize_no_preprocessing(train_t, test_t):
+
+	vectorizer = TfidfVectorizer(analyzer='word')
+
+	train_t = vectorizer.fit_transform(train_t)
+	test_t = vectorizer.transform(test_t)
+
+
+	return train_t, test_t
+
 def main():
 	# check arguments
 	if len(argv) != 3:
@@ -75,19 +90,6 @@ def main():
 	train_t, train_c, test_t, test_c = split_data(train_df, test_df)
 	train_t, test_t = vectorize(train_t, test_t)
 
-	# build and train SUPPORT VECTOR MACHINE
-	print("\nBuilding and training SVM...")
-	#svm = SGDClassifier(max_iter=20000, tol=1e-5,alpha=0.00006).fit(train_t, train_c)
-	svm = LinearSVC().fit(train_t, train_c)
-
-	print("Done!\n")
-
-	# test svm
-	prediction = svm.predict(test_t)
-	accuracy = accuracy_score(test_c, prediction)
-	print("SVM accuracy: {}%".format(accuracy*100))
-
-	"""
 	# build and train NAIVE BAYES
 	print("Building and training NB...")
 	nb = MultinomialNB().fit(train_t, train_c)
@@ -96,8 +98,25 @@ def main():
 	# test naive bayes
 	prediction = nb.predict(test_t)
 	accuracy = accuracy_score(test_c, prediction)
+	print(classification_report(test_c, prediction))
+	print("Jaccard score:" , jaccard_score(test_c, prediction,average=None))
 	print("Naive Bayes accuracy: {}%".format(accuracy*100))
-	"""
+
+
+	# build and train SUPPORT VECTOR MACHINE
+	print("\nBuilding and training SVM...")
+	#svm = SGDClassifier(max_iter=20000, tol=1e-5,alpha=0.00006).fit(train_t, train_c)
+
+	svm = LinearSVC().fit(train_t, train_c)
+
+	print("Done!\n")
+
+	# test svm
+	prediction = svm.predict(test_t)
+	accuracy = accuracy_score(test_c, prediction)
+	print(classification_report(test_c, prediction))
+	print("Jaccard score:" , jaccard_score(test_c, prediction,average=None))
+	print("SVM accuracy: {}%".format(accuracy*100))
 
 if __name__ == '__main__':
 	main()
