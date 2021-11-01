@@ -19,7 +19,7 @@ def run_model_test(trainPath, testPath):
     testCategories = metrics.text_to_column_array(testPath, 0)
     testQuestions = metrics.text_to_column_array(testPath, 1)
 
-    categories = naivebayes_model(trainQuestions,trainCategories, testQuestions, preprocess=False)
+    categories = naivebayes_model(trainQuestions,trainCategories, testQuestions, preprocess=True)
 
     print(metrics.guess_accuracy(testCategories, categories))
 
@@ -104,8 +104,8 @@ def naivebayes_model(questionsTrain, categoriesTrain, questionsTest, preprocess=
     for s in t:
         chances = {}
         for c in possible_cat:
-            #chances[c] = priors[c]
-            chances[c] = 1
+            chances[c] = priors[c]
+            #chances[c] = 1
             for w in s:
                 if(w+c in cond):
                     chances[c] *= cond[w+c]
@@ -121,4 +121,4 @@ def naivebayes_model(questionsTrain, categoriesTrain, questionsTest, preprocess=
     return results
 
 
-run_model_test("./dev.txt","./trainWithoutDev.txt")
+run_model_test("./trainWithoutDev.txt","./dev_clean.txt")
