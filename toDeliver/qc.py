@@ -9,8 +9,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 import numpy as np
 import pandas as pd
-import utils
 
+
+def file_to_dataframe(filename, names=["Category", "Question", "Answer", "Noise"]):
+	assert filename is not None, TypeError("No filename given.")
+
+	return pd.read_csv(filename, delimiter='\t', names=names)
 
 
 """
@@ -18,8 +22,8 @@ Convert arguments to panda dataframes,
 and create new column 'Content'
 """
 def convert_to_pandas(train_set_filename, test_set_filename):
-	train_df = utils.file_to_dataframe(train_set_filename)
-	test_df = utils.file_to_dataframe(test_set_filename)
+	train_df = file_to_dataframe(train_set_filename)
+	test_df = file_to_dataframe(test_set_filename, names =["Question","Answer","Noise"])
 
 	# 'Content' = 'Question' + 'Answer'
 	train_df['Content'] = train_df['Question'] + ' ' + train_df['Answer'] + ' ' + train_df['Answer']
@@ -39,9 +43,8 @@ def split_data(train_df, test_df):
 	train_c = train_df['Category'].tolist()
 
 	test_t = test_df['Content'].tolist()
-	test_c = test_df['Category'].tolist()
 
-	return train_t, train_c, test_t, test_c
+	return train_t, train_c, test_t
 
 
 """
@@ -70,7 +73,7 @@ def main():
 
 	# text preprocessing
 	train_df, test_df = convert_to_pandas(args.train, args.test)
-	train_t, train_c, test_t, test_c = split_data(train_df, test_df)
+	train_t, train_c, test_t = split_data(train_df, test_df)
 	train_t, test_t = vectorize(train_t, test_t)
 
 	# build and train SUPPORT VECTOR MACHINE
@@ -80,8 +83,6 @@ def main():
 	prediction = svm.predict(test_t)
 	for p in prediction:
 		print(p)
-	#accuracy = accuracy_score(test_c, prediction)
-	#print("SVM accuracy: {}%".format(accuracy*100))
 
 
 if __name__ == '__main__':
