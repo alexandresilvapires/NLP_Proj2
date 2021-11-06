@@ -11,21 +11,15 @@ import numpy as np
 import pandas as pd
 
 
-def file_to_dataframe(filename, names=["Category", "Question", "Answer", "Noise"]):
-	assert filename is not None, TypeError("No filename given.")
-
-	return pd.read_csv(filename, delimiter='\t', names=names)
-
-
 """
 Convert arguments to panda dataframes,
 and create new column 'Content'
 """
 def convert_to_pandas(train_set_filename, test_set_filename):
-	train_df = file_to_dataframe(train_set_filename)
-	test_df = file_to_dataframe(test_set_filename, names =["Question","Answer","Noise"])
+	train_df = pd.read_csv(train_set_filename, delimiter='\t', names=["Category", "Question", "Answer", "Noise"])
+	test_df = pd.read_csv(test_set_filename, delimiter='\t', names =["Question","Answer","Noise"])
 
-	# 'Content' = 'Question' + 'Answer'
+	# 'Content' = 'Question' + 'Answer' (+ 'Answer')
 	train_df['Content'] = train_df['Question'] + ' ' + train_df['Answer'] + ' ' + train_df['Answer']
 	train_df['Content'] = train_df['Content'].fillna('') # replace NaN with ''
 	
